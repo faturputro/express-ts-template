@@ -35,3 +35,5 @@ $ npx sequelize-cli db:migrate
 ```
 $ npx sequelize-cli db:seed:all
 ```
+
+If error occured on initial `npm run dev`, try `npm run build` and then `npm run dev` again
