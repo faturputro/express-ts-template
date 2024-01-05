@@ -14,5 +14,7 @@ declare namespace Express {
     sendSuccess: (data?: SendSuccess, message?: string) => void;
     sendError: (data?: SendError) => void;
     failed: (message?: string) => void;
+    unauthorized: (message?: string) => void;
+    notFound: (message?: string) => void;
   }
 }
