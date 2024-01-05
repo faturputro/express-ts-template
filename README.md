@@ -1,4 +1,4 @@
-# Express + TS + MySQL Restful API
+# Restful API Express + TS + SWC + MySQL
 
 # Prerequisite
 
