@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const APP_PORT = process.env.PORT || 3000;
+export const APP_PORT = process.env.PORT || 9000;
 export const APP_HOST = process.env.APP_HOST;
 
 export const MAILER_CONFIG = {
