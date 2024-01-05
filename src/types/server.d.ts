@@ -1,4 +1,4 @@
-type SendSuccess = { data?: Record<string, unknown> | Record<string, unknown>[] | unknown | undefined; message?: string };
+type SendSuccess = Record<string, unknown> | Record<string, unknown>[] | unknown | undefined;
 type SendError = { message?: string | unknown; code?: number; status?: number; data?: Record<string, unknown>; errors?: Record<string, unknown> };
 type UserSession = {
   id: number;
@@ -11,7 +11,7 @@ declare namespace Express {
   }
 
   export interface Response {
-    sendSuccess: (data?: SendSuccess) => void;
+    sendSuccess: (data?: SendSuccess, message?: string) => void;
     sendError: (data?: SendError) => void;
     failed: (message?: string) => void;
   }

@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import response from './middlewares/response';
 import { APP_PORT } from './config/app.config';
 import ControllerV1 from './controllers';
+import Connection from './config/Connection';
 
 export default class App extends Server {
   constructor() {
@@ -15,7 +16,7 @@ export default class App extends Server {
     this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
     this.app.use(response);
     super.addControllers([
-      new ControllerV1()
+      new ControllerV1(),
     ]);
   }
 
@@ -26,6 +27,8 @@ export default class App extends Server {
   }
 
   private async bootstrap() {
-    // await initDB()
+    await Connection.getConnection().authenticate();
+    console.log('Connected to DB!');
+    Connection.getRedis();
   }
 }

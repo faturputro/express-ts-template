@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
 export default (req: Request, res: Response, next: NextFunction) => {
-  res.sendSuccess = (data?: SendSuccess) => {
-    return res.status(200).json({ data: data?.data, message: data?.message || 'Request successful' });
+  res.sendSuccess = (data: SendSuccess, message?: string) => {
+    return res.status(200).json({ data, message: message || 'Request successful' });
   };
 
   res.sendError = (data?: SendError) => {
