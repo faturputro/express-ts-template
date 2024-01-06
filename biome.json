@@ -7,7 +7,9 @@
 		"formatter": {
 			"indentWidth": 2,
 			"semicolons": "always",
-			"quoteStyle": "single"
+			"quoteStyle": "single",
+			"trailingComma": "all",
+			"lineWidth": 150
 		}
 	},
 	"linter": {
