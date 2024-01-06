@@ -1,4 +1,4 @@
-# Restful API Express + TS + SWC + MySQL + Rust
+# Restful API Express + TS + SWC + MySQL + Rust🚀⚡️
 
 # Prerequisite
 
