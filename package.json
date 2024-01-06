@@ -1,7 +1,6 @@
 {
   "name": "restful-express-ts-template",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "engines": {
     "node": ">=18.18.2"
@@ -15,8 +14,7 @@
     "start": "NODE_ENV=production node dist/index.js",
     "clean": "rm -rf dist"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Faturachman Dwi Putro",
   "license": "ISC",
   "dependencies": {
     "@overnightjs/core": "^1.7.6",
