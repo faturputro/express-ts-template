@@ -1,21 +1,27 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
-export default (req: Request, res: Response, next: NextFunction) => {
-  res.sendSuccess = (data: SendSuccess, message?: string) => {
-    return res.status(200).json({ data, message: message || 'Request successful' });
-  };
+export default (_req: Request, res: Response, next: NextFunction) => {
+	res.sendSuccess = (data: SendSuccess, message?: string) => {
+		return res
+			.status(200)
+			.json({ data, message: message || 'Request successful' });
+	};
 
-  res.sendError = (data?: SendError) => {
-    return res.status(400).json({ data: data?.data, message: data?.message || 'Something went wrong' });
-  };
-  
-  res.failed = (msg?: string) => {
-    return res.status(500).json({ message: msg || 'Internal Server Error' });
-  };
+	res.sendError = (data?: SendError) => {
+		return res.status(400).json({
+			data: data?.data,
+			message: data?.message || 'Something went wrong',
+		});
+	};
 
-  res.unauthorized = (msg?: string) => res.status(401).json({ message: msg || 'Unauthorized' });
+	res.failed = (msg?: string) => {
+		return res.status(500).json({ message: msg || 'Internal Server Error' });
+	};
 
-  res.notFound = () => res.status(404).json({ message: 'Not found' });
+	res.unauthorized = (msg?: string) =>
+		res.status(401).json({ message: msg || 'Unauthorized' });
 
-  return next();
+	res.notFound = () => res.status(404).json({ message: 'Not found' });
+
+	return next();
 };
