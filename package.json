@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": ">=18.18.2"
+    "node": ">=18"
   },
   "scripts": {
     "dev": "export NODE_ENV=development && concurrently -r \"npm run watch-compile\" \"npm run watch-dev\"",
