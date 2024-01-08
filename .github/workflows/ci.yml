@@ -1,4 +1,4 @@
-name: Node.js CI/CD
+name: Restful CI/CD
 
 on:
   push:
@@ -42,5 +42,9 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }} \
-        'cd restful-express-ts-template && git pull && npm install && npm run build && pm2 start npm --name "project_name" -- start'
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
+        chmod 600 ssh_key.pem
+        scp -i ssh_key.pem -o StrictHostKeyChecking=no -r . ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.PROJECT_PATH}}
+        ssh -i ssh_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
+        cd ${{ secrets.PROJECT_PATH }} && git pull && npm install && npm run build && pm2 start npm --name "project_name" -- start
+        rm ssh_key.pem
