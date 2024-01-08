@@ -33,27 +33,18 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
 
-    env:
-      DESTINATION_PATH: ${{ secrets.PROJECT_PATH }}
-
     steps:
     - name: Checkout branch
       uses: actions/checkout@v2
 
-    - name: Set destination path
-      run: echo "DESTINATION_PATH=${{ github.workspace }}" >> $GITHUB_ENV
-
     - name: Install SSH client
       run: sudo apt-get install openssh-client
-
-    # - name: Change dir
-    #   run: cd $GITHUB_WORKSPACE
 
     - name: Deploy
       run: |
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
         chmod 600 ssh_key.pem
-        scp -i ssh_key.pem -o StrictHostKeyChecking=no -r $(ls -A | grep -vE '\.git$|node_modules') ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
+        scp -i ssh_key.pem -o StrictHostKeyChecking=no -r $(ls -A | grep -vE '\.git$|node_modules') ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.PROJECT_PATH }}
         ssh -i ssh_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
-        'git pull && npm install && npm run build && pm2 start npm --name "project_name" -- start'
+        'cd ${{ secrets.PROJECT_PATH }} && git pull && npm install && npm run build && pm2 start npm --name "project_name" -- start'
         rm ssh_key.pem
