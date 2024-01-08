@@ -1,14 +1,11 @@
-import User from '@/models/User';
 import { Controller, Get } from '@overnightjs/core';
 import { Request, Response } from 'express';
+import User from '@/models/User';
 
 @Controller('user')
 export default class UserController {
 	@Get('')
-	protected async getUser(
-		_req: Request,
-		res: Response,
-	): Promise<Response | void> {
+	protected async getUser(_req: Request, res: Response): Promise<Response | void> {
 		try {
 			const user = await User.findAll();
 
