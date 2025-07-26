@@ -12,7 +12,9 @@
     "lint": "biome lint ./src",
     "build": "biome lint ./src && swc src -d dist",
     "start": "NODE_ENV=production node dist/index.js",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepare": "husky",
+    "precommit": "tsc && npm run lint"
   },
   "author": "Faturachman Dwi Putro",
   "license": "ISC",
