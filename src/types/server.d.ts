@@ -10,7 +10,8 @@ type SendError = {
 	data?: Record<string, unknown>;
 	errors?: Record<string, unknown>;
 };
-type UserSession = {
+
+type SessionClaim = {
 	id: number;
 	email: string;
 };

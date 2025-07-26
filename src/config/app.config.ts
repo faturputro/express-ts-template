@@ -34,3 +34,7 @@ export const REDIS_CONFIG = {
 export const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET as string;
 
 export const DEV_MODE = process.env.NODE_ENV === 'development';
+
+export const APP_PKCS8_KEY = process.env.APP_PKCS8_KEY as string;
+
+export const COOKIE_NAME = process.env.COOKIE_NAME as string;

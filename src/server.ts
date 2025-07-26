@@ -1,6 +1,7 @@
 import { Server } from '@overnightjs/core';
 import express from 'express';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import ControllerV1 from './controllers/v1';
 import response from '@/middlewares/response';
 import logRequest from '@/middlewares/logRequest';
@@ -9,11 +10,15 @@ export default class App extends Server {
 	constructor() {
 		super(process.env.NODE_ENV === 'development');
 		this.app.use(helmet());
+		this.app.use(cookieParser());
 		this.app.use(express.json({ limit: '10mb' }));
 		this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 		this.app.use(logRequest);
 		this.app.use(response);
-		super.addControllers([new ControllerV1()]);
+
+		super.addControllers([
+			new ControllerV1(),
+		]);
 
 		this.start();
 	}

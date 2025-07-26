@@ -5,6 +5,7 @@ import {
   CreatedAt,
   DataType,
   DeletedAt,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -12,6 +13,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript';
 import { IDENTIFIER } from './dataType';
+import RolePermission from './RolePermission';
 
 @Table({
   paranoid: true,
@@ -53,4 +55,7 @@ export default class Role extends Model {
   @DeletedAt
   @Column(DataType.DATE)
   declare deleted_at: string | null;
+
+  @HasMany(() => RolePermission, 'role_id')
+  declare role_permissions: RolePermission[]
 }

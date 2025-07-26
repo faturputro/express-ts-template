@@ -11,4 +11,5 @@ export enum AppErrorCode {
   BadConfiguration = 1008,
   Conflict = 1009, // Concurrent tasks disallowed
   DataNotFound = 1010,
+  SessionExpired = 1011,
 }

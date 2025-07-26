@@ -2,7 +2,7 @@ import { literal, Op, Sequelize, WhereOptions } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import User from '@/models/User';
 import { BaseQueryParams, Paginated } from '@/types/query';
-import type { IUserService, RegisterUserDTO, UpdateUserDTO } from '@/types/user';
+import type { IUserRepository, IUserService, RegisterUserDTO, UpdateUserDTO, UserDetails } from '@/types/user';
 import AppError from '@/utils/AppError';
 import { AppErrorCode } from '@/types/app';
 import { logger } from '@/utils/logger';
@@ -10,7 +10,8 @@ import UserPermission from '@/models/UserPermission';
 
 export default class UserService implements IUserService {
   constructor(
-    private readonly db: Sequelize
+    private readonly db: Sequelize,
+    private readonly userRepo: IUserRepository
   ) {}
 
   async getAll(params: BaseQueryParams): Promise<Paginated<User>> {
@@ -40,15 +41,46 @@ export default class UserService implements IUserService {
     return result;
   }
 
-  async getDetail(id: number): Promise<User> {
-    const result = await User.findByPk(id, {
-      attributes: {
-        exclude: ['password'],
+  async getDetails(dto: { id?: number, email?: string }): Promise<UserDetails | null> {
+    const transform = (user: User) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      date_of_birth: user.date_of_birth,
+      gender: user.gender,
+      is_verified: user.is_verified,
+      password: user.password,
+      role: {
+        name: user.role.name,
+        slug: user.role.slug,
       },
-      rejectOnEmpty: new AppError({ code: AppErrorCode.DataNotFound, message: 'User not found', t: 'COMMON.NOT_FOUND' }),
+      permissions: Array.from(
+        new Set(
+          user.role.role_permissions.map((p) => p.permission.slug)
+            .concat(user.user_permissions.map((p) => p.permission.slug))
+        )
+      ),
     });
 
-    return result;
+    if (dto.email) {
+      const result = await this.userRepo.getByEmail(dto.email);
+      if (result) {
+        return transform(result);
+      }
+
+      return null;
+    }
+    
+    if (dto.id) {
+      const result = await this.userRepo.getById(dto.id);
+      if (result) {
+        return transform(result);
+      }
+
+      return null;
+    }
+
+    throw new Error('ID or email is required');
   }
 
   async create(dto: RegisterUserDTO): Promise<User> {

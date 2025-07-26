@@ -16,7 +16,7 @@ export default (req: Request, _res: Response, next: NextFunction) => {
     logger.info(`${req.method} ${req.path}`, {
       request_id: requestId,
       timestamp,
-      headers: req.headers,
+      headers: { ...req.headers },
       ...(Object.keys(req.body).length ? { body: {...req.body} } : {}),
       ...(Object.keys(req.query).length ? { query: {...req.query} } : {}),
       ...(Object.keys(req.params).length ? { params: {...req.params} } : {}),

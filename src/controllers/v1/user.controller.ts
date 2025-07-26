@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
-import { Controller, Get, Middleware, Post } from '@overnightjs/core';
+import { ClassMiddleware, Controller, Get, Middleware, Post } from '@overnightjs/core';
 import { IUserService, RegisterUserDTO } from '@/types/user';
 import paginated from '@/middlewares/paginated';
 import { logger } from '@/utils/logger';
+import authenticated from '@/middlewares/authenticated';
 
 @Controller('user')
+@ClassMiddleware([authenticated])
 export default class UserController {
 	constructor(
 		private readonly service: IUserService
@@ -25,7 +27,7 @@ export default class UserController {
 	@Get(':id')
 	protected async getDetail(req: Request<{ id: string }>, res: Response) {
 		try {
-			const user = await this.service.getDetail(Number(req.params.id));
+			const user = await this.service.getDetails({ id: Number(req.params.id) });
 			return res.success(user);
 		} catch (e) {
 			logger.error('Error UserController.getDetail: ', e);
@@ -36,10 +38,10 @@ export default class UserController {
 	@Post()
 	protected async create(req: Request<unknown, unknown, RegisterUserDTO>, res: Response) {
 		try {
-			console.log(req.body, '<----- body');
 			const user = await this.service.create(req.body);
 			return res.success(user);
 		} catch (e) {
+			logger.error('Error UserController.create: ', e);
 			return res.failed(e);
 		}
 	}

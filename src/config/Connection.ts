@@ -29,6 +29,7 @@ class Connection {
 					underscored: true,
 				},
 			});
+
 			Connection.db = instance;
 		}
 		return Connection.db;
@@ -40,12 +41,13 @@ class Connection {
 				host: REDIS_CONFIG.HOST,
 				port: parseInt(REDIS_CONFIG.PORT || '6379', 10),
 				db: 1,
+				connectTimeout: 10000,
+				maxLoadingRetryTime: 10000,
+				maxRetriesPerRequest: 1,
+				enableReadyCheck: true,
 			};
 
 			Connection.redis = new IORedis(options);
-			Connection.redis.on('error', (err) =>
-				console.log('redis error:', err.message, '=>', JSON.stringify(err)),
-			);
 		}
 
 		return Connection.redis;

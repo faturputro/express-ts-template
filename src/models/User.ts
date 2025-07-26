@@ -1,6 +1,7 @@
 import {
 	AllowNull,
 	AutoIncrement,
+	BelongsTo,
 	Column,
 	CreatedAt,
 	DataType,
@@ -16,6 +17,7 @@ import {
 } from 'sequelize-typescript';
 import { IDENTIFIER } from './dataType';
 import UserPermission from './UserPermission';
+import Role from './Role';
 
 @Table({
 	paranoid: true,
@@ -77,6 +79,9 @@ export default class User extends Model {
 	@DeletedAt
 	@Column(DataType.DATE)
 	declare deleted_at: string | null;
+
+	@BelongsTo(() => Role, 'role_id')
+	declare role: Role
 
 	@HasMany(() => UserPermission, 'user_id')
 	declare user_permissions: UserPermission[]
