@@ -12,7 +12,11 @@ A Node.js Express project template with built-in support for TypeScript, Redis, 
 - **Redis Integration** — For caching and fast in-memory data access.
 - **Cookie-based Authentication** — Stateless secure session handling.
 - **Role-Based Access Control (RBAC)** — Fine-grained access control per route.
-- **Logging** — Persistent logging via SQLite in production; console-only in development.
+- **Logging**
+  - Console in development
+  - SQLite persistence in production
+  - 🔒 **PII-safe via log redactor**
+- **i18n Support** — Internationalized error messages & responses (Bahasa & English)
 - **Unit Testing** — Powered by [Vitest](https://vitest.dev), with fast and simple testing setup.
 - **[Biome](https://biomejs.dev/)** — Code formatter and linter in one, for consistent style and code quality.
 - **Pre-commit Hooks** — Prevent bad code from being committed (via [husky](https://typicode.github.io/husky/)).
