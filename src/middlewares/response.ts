@@ -4,6 +4,9 @@ import AppError from '@/utils/AppError';
 import { t as i18n } from '@/utils/i18n';
 import { DictPath, Locale, LocaleName } from '@/utils/i18n/type';
 import { AppErrorCode } from '@/types/app';
+import { logger } from '@/utils/logger';
+import context from '@/utils/context';
+import { ContextKey } from '@/types/enums';
 
 type LocaleMessageType = DictPath<Locale> | {
   key: DictPath<Locale>,
@@ -12,6 +15,8 @@ type LocaleMessageType = DictPath<Locale> | {
 
 export default (req: Request, res: Response, next: NextFunction) => {
 	const lang = (req.headers['accept-language']?.split(', ').pop() as LocaleName) ?? 'en-US';
+  const requestId = context.get(ContextKey.RequestID);
+  const timestamp = context.get(ContextKey.Timestamp);
 
 	res.success = (data?: unknown, message?: string, t?: LocaleMessageType): Response => {
     let msg = message;
@@ -29,13 +34,24 @@ export default (req: Request, res: Response, next: NextFunction) => {
     return res.status(200).json({
       success: true,
       message: msg,
-      request_id: req.request_id,
-      timestamp: req.timestamp,
+      request_id: requestId,
+      timestamp,
       data: data || null,
     });
   };
 
-	res.failed = (e: Error | unknown): Response => {
+	res.failed = (e: Error): Response => {
+    if (e.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({
+        success: false,
+        code: AppErrorCode.DuplicateUniqueResource,
+        message: (e as UniqueConstraintError).errors.map((err) => `${err.path} "${err.value} already exists"`).join(', '),
+        request_id: requestId,
+        timestamp,
+        data: null,
+      });
+    }
+
     if (e instanceof AppError) {
       let message = e.message;
 
@@ -47,25 +63,14 @@ export default (req: Request, res: Response, next: NextFunction) => {
         });
       }
 
-      if (e instanceof UniqueConstraintError) {
-        return res.status(400).json({
-          success: false,
-          code: AppErrorCode.DuplicateUniqueResource,
-          message: e.errors.map((err) => `${err.path} "${err.value} already exists"`).join(', '),
-          request_id: req.request_id,
-          timestamp: req.timestamp,
-          data: null,
-        });
-      }
-
       switch (e.code) {
         case AppErrorCode.Unauthorized:
           return res.status(401).json({
             success: false,
             code: e.code,
             message,
-            request_id: req.request_id,
-            timestamp: req.timestamp,
+            request_id: requestId,
+            timestamp,
             data: e.data || null,
           });
         case AppErrorCode.Forbidden:
@@ -73,8 +78,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
             success: false,
             code: e.code,
             message,
-            request_id: req.request_id,
-            timestamp: req.timestamp,
+            request_id: requestId,
+            timestamp,
             data: e.data || null,
           });
         case AppErrorCode.TooManyRequests:
@@ -82,8 +87,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
             success: false,
             code: e.code,
             message,
-            request_id: req.request_id,
-            timestamp: req.timestamp,
+            request_id: requestId,
+            timestamp,
             data: e.data || null,
           });
         case AppErrorCode.NotFound:
@@ -91,8 +96,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
             success: false,
             code: e.code,
             message,
-            request_id: req.request_id,
-            timestamp: req.timestamp,
+            request_id: requestId,
+            timestamp,
             data: e.data || null,
           });
         default:
@@ -100,19 +105,21 @@ export default (req: Request, res: Response, next: NextFunction) => {
             success: false,
             code: e.code,
             message,
-            request_id: req.request_id,
-            timestamp: req.timestamp,
+            request_id: requestId,
+            timestamp,
             data: e.data || null,
           });
       }
     }
 
+    logger.error(`${req.method} ${req.originalUrl}`, { stack: e.stack ?? null, request_id: requestId, timestamp });
+
     return res.status(500).json({
       success: false,
       code: AppErrorCode.InternalServerError,
-      request_id: req.request_id,
-      timestamp: req.timestamp,
       message: i18n({ key: 'COMMON.INTERNAL_ERROR' }),
+      request_id: requestId,
+      timestamp,
       data: null,
     });
   };

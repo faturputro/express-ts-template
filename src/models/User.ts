@@ -6,6 +6,7 @@ import {
 	DataType,
 	Default,
 	DeletedAt,
+	HasMany,
 	IsEmail,
 	Model,
 	PrimaryKey,
@@ -13,6 +14,8 @@ import {
 	Unique,
 	UpdatedAt,
 } from 'sequelize-typescript';
+import { IDENTIFIER } from './dataType';
+import UserPermission from './UserPermission';
 
 @Table({
 	paranoid: true,
@@ -23,48 +26,58 @@ import {
 export default class User extends Model {
 	@AutoIncrement
 	@PrimaryKey
-	@Column(DataType.INTEGER)
-	id!: number;
+	@Column(IDENTIFIER)
+	declare id: number;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	name!: string;
+	declare name: string;
 
 	@AllowNull(false)
 	@Unique
 	@IsEmail
 	@Column(DataType.STRING)
-	email!: string;
+	declare email: string;
 
 	@AllowNull(false)
 	@Column(DataType.STRING)
-	password!: string;
+	declare password: string;
 
 	@AllowNull(false)
 	@Column(DataType.TINYINT)
-	gender!: number;
+	declare gender: number;
 
 	@AllowNull(false)
 	@Column(DataType.DATEONLY)
-	date_of_birth!: Date;
-
-	@Default(1)
-	@Column(DataType.SMALLINT)
-	subscription_type!: number;
+	declare date_of_birth: string;
 
 	@Default(false)
 	@Column(DataType.BOOLEAN)
-	is_verified!: boolean;
+	declare is_verified: boolean;
+
+	@Default(false)
+	@Column(IDENTIFIER)
+	declare role_id: number;
 
 	@CreatedAt
 	@Column(DataType.DATE)
-	created_at!: Date;
+	declare created_at: string;
+
+	@AllowNull(false)
+	@Column(IDENTIFIER)
+	declare created_by: number;
+
+	@Column(IDENTIFIER)
+	declare updated_by: number | null;
 
 	@UpdatedAt
 	@Column(DataType.DATE)
-	updated_at?: Date;
+	declare updated_at: string | null;
 
 	@DeletedAt
 	@Column(DataType.DATE)
-	deleted_at?: Date;
+	declare deleted_at: string | null;
+
+	@HasMany(() => UserPermission, 'user_id')
+	declare user_permissions: UserPermission[]
 }

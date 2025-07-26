@@ -1,9 +1,10 @@
 import chalk from 'chalk';
 import IORedis, { Redis, RedisOptions } from 'ioredis';
 import { Sequelize } from 'sequelize-typescript';
-import { DB_CONFIG, REDIS_CONFIG } from './app.config';
+import { DB_CONFIG, DEV_MODE, REDIS_CONFIG } from './app.config';
+import models from '@/models';
 
-const customerLogger = (query: string) =>
+const customLogger = (query: string) =>
 	console.log(`\n${chalk.cyan(query)}\n`);
 
 class Connection {
@@ -15,9 +16,9 @@ class Connection {
 			const instance = new Sequelize({
 				database: DB_CONFIG.DB_NAME,
 				dialect: 'mysql',
-				logging:
-					process.env.NODE_ENV === 'development' ? customerLogger : false,
-				models: [],
+				logging: DEV_MODE ? customLogger : false,
+				logQueryParameters: DEV_MODE,
+				models,
 				username: DB_CONFIG.DB_USER,
 				password: DB_CONFIG.DB_PASSWORD,
 				host: DB_CONFIG.DB_HOST,

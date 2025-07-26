@@ -30,7 +30,7 @@ export default class SQLiteTransport extends Transport {
 
     this.db.run(`
       CREATE TABLE IF NOT EXISTS logs (
-        request_id TEXT PRIMARY KEY,
+        request_id TEXT,
         timestamp TEXT NOT NULL,
         level TEXT NOT NULL,
         message TEXT NOT NULL,

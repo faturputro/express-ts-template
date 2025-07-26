@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
+    "useUnknownInCatchVariables": false,
     "emitDecoratorMetadata": true,
     "moduleResolution": "Node",
     "noEmit": true,

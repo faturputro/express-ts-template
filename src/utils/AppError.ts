@@ -1,5 +1,6 @@
 import { AppErrorCode } from './../types/app';
 import type { DictPath, Locale } from './i18n/type';
+import { logger } from './logger';
 
 interface AppErrorOptions {
   message?: string;
@@ -30,9 +31,16 @@ export default class AppError extends Error {
 
   constructor({ message, code, data, t }: AppErrorOptions) {
     super();
+    const errCode = code || AppErrorCode.InternalServerError;
     this.message = message || 'Something went wrong...';
-    this.code = code || AppErrorCode.InternalServerError;
+    this.code = code;
     this.data = data;
     this.t = t;
+
+    if (process.env.NODE_ENV !== 'development') {
+      logger.error(`ERR CODE: ${errCode}`, {
+        errors: data,
+      });
+    }
   }
 }

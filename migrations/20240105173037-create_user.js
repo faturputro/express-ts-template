@@ -31,6 +31,10 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      role_id: {
+        type: config.IDENTIFIER,
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -48,6 +52,10 @@ module.exports = {
 
     await queryInterface.addIndex('user', {
       fields: ['email'],
+    });
+
+    await queryInterface.addIndex('user', {
+      fields: ['role_id'],
     });
   },
 

@@ -27,6 +27,6 @@ declare namespace Express {
       key: DictPath<Locale>,
       values: Record<string, string>
     }) => void;
-    failed: (e: Error | unknown) => void;
+    failed: (e: Error) => void;
 	}
 }

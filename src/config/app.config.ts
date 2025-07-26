@@ -32,3 +32,5 @@ export const REDIS_CONFIG = {
 } as const;
 
 export const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET as string;
+
+export const DEV_MODE = process.env.NODE_ENV === 'development';

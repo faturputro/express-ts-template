@@ -52,7 +52,6 @@ const acquireConnections = async () => {
   
       process.on('SIGTERM', shutdown);
       process.on('SIGINT', shutdown);
-      process.on('uncaughtException', shutdown);
     });
   } catch (e) {
     console.log('server error: ', e);
