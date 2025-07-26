@@ -1,48 +1,73 @@
-name: Restful CI/CD
+name: App CI/CD
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18]
+        node-version: [20.x]
 
     steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Use Node ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Build
-      run: npm run build
+      - name: Build Application
+        run: npm run build
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+      - name: rsync
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./*
+          remote_path: ${{ secrets.PROJECT_PATH }}
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USERNAME }}
+          remote_key: "${{ secrets.SSH_PRIVATE_KEY }}"
 
-    steps:
-    - name: Checkout branch
-      uses: actions/checkout@v2
+      - name: Set Ownership
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
 
-    - name: Install SSH client
-      run: sudo apt-get install openssh-client
+          mkdir -p /home/runner/.ssh
+          touch /home/runner/.ssh/known_hosts
 
-    - name: Deploy
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key.pem
-        chmod 600 ssh_key.pem
-        ssh -i ssh_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} 'cd ${{ secrets.PROJECT_PATH }} && git pull && npm install && npm run build && pm2 startOrRestart ecosystem.config.js'
-        rm ssh_key.pem
+          ssh-keygen -R ${{ secrets.SSH_HOST }} >> /home/runner/.ssh/known_hosts
+
+          ssh -i private_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: VPS Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.PROJECT_PATH }}
+            export NVM_DIR=~/.nvm
+            export APP_VERSION_HASH=$(git rev-parse --short HEAD)
+            source ~/.nvm/nvm.sh
+            npm install
+            npm run build
+            pm2 reload
+      
+      - name: Cleanup
+        run: |
+          rm -f ~/private_key.pem private_key.pem

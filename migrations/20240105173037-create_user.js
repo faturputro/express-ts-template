@@ -1,14 +1,11 @@
 'use strict';
+const config = require('../config/migration.config');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.createTable('user', {
-      id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
+      id: config.PRIMARY_KEY,
       name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -27,13 +24,8 @@ module.exports = {
         allowNull: false,
       },
       gender: {
-        type: Sequelize.TINYINT,
-        allowNull: false,
-      },
-      subscription_type: {
-        allowNull: false,
         type: Sequelize.SMALLINT,
-        defaultValue: 1,
+        allowNull: false,
       },
       is_verified: {
         type: Sequelize.BOOLEAN,
@@ -44,7 +36,13 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
+      created_by: {
+        type: config.IDENTIFIER,
+        allowNull: false,
+        defaultValue: 1,
+      },
       updated_at: Sequelize.DATE,
+      updated_by: config.IDENTIFIER,
       deleted_at: Sequelize.DATE,
     });
 
@@ -53,7 +51,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down (queryInterface, _Sequelize) {
     await queryInterface.dropTable('user');
   }
 };

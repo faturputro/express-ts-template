@@ -10,7 +10,7 @@ class Connection {
 	private static db: Sequelize;
 	private static redis: Redis;
 
-	public static getConnection(): Sequelize {
+	public static DB(): Sequelize {
 		if (!Connection.db) {
 			const instance = new Sequelize({
 				database: DB_CONFIG.DB_NAME,
@@ -33,7 +33,7 @@ class Connection {
 		return Connection.db;
 	}
 
-	public static getRedis(): Redis {
+	public static Redis(): Redis {
 		if (!Connection.redis) {
 			const options: RedisOptions = {
 				host: REDIS_CONFIG.HOST,
@@ -42,7 +42,6 @@ class Connection {
 			};
 
 			Connection.redis = new IORedis(options);
-			Connection.redis.on('connect', () => console.log('Connected to Redis!'));
 			Connection.redis.on('error', (err) =>
 				console.log('redis error:', err.message, '=>', JSON.stringify(err)),
 			);

@@ -18,13 +18,15 @@ type UserSession = {
 declare namespace Express {
 	export interface Request {
 		user: UserSession;
+		request_id: string;
+		timestamp: string;
 	}
 
 	export interface Response {
-		sendSuccess: (data?: SendSuccess, message?: string) => void;
-		sendError: (data?: SendError) => void;
-		failed: (message?: string) => void;
-		unauthorized: (message?: string) => void;
-		notFound: (message?: string) => void;
+		success: (data?: unknown, message?: string, t?: DictPath<Locale> | {
+      key: DictPath<Locale>,
+      values: Record<string, string>
+    }) => void;
+    failed: (e: Error | unknown) => void;
 	}
 }

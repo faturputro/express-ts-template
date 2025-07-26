@@ -8,14 +8,14 @@ export const APP_HOST = process.env.APP_HOST;
 export const MAILER_CONFIG = {
 	USER_EMAIL: process.env.USER_EMAIL,
 	USER_PASS: process.env.USER_PASS,
-};
+} as const;
 
 export const DB_CONFIG = {
 	DB_NAME: process.env.DB_NAME,
 	DB_HOST: process.env.DB_HOST,
 	DB_USER: process.env.DB_USER,
 	DB_PASSWORD: process.env.DB_PASSWORD,
-};
+} as const;
 
 export const JWT_SECRET = String(process.env.JWT_SECRET);
 
@@ -24,11 +24,11 @@ export const S3_CONFIG = {
 	SECRET_KEY: process.env.AWS_SECRET_ACCESS_KEY,
 	REGION: process.env.AWS_REGION,
 	BUCKET: process.env.AWS_S3_BUCKET,
-};
+} as const;
 
 export const REDIS_CONFIG = {
 	HOST: process.env.REDIS_HOST,
 	PORT: process.env.REDIS_PORT,
-};
+} as const;
 
-export const ELASTIC_HOST = process.env.ELASTIC_HOST;
+export const ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET as string;

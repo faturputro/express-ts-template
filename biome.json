@@ -1,29 +1,63 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.4.1/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
 	"organizeImports": {
 		"enabled": true
 	},
 	"javascript": {
 		"formatter": {
+			"indentStyle": "tab",
 			"indentWidth": 2,
 			"semicolons": "always",
 			"quoteStyle": "single",
-			"trailingComma": "all",
+			"trailingCommas": "all",
 			"lineWidth": 150
 		}
 	},
 	"linter": {
+		"ignore": [
+			"seeders/*.js",
+			"migrations/*.js",
+			"config/*.js",
+			"config/*.ts",
+			"dist/**/*.*"
+		],
 		"enabled": true,
 		"rules": {
 			"recommended": true,
+			"performance": {
+				"noDelete": "off"
+			},
+			"a11y": {
+				"useButtonType": "off",
+				"useAltText": "off",
+				"useKeyWithClickEvents": "off",
+				"useValidAnchor": "off"
+			},
 			"correctness": {
-				"noUnusedVariables": "warn"
+				"noUnusedVariables": "warn",
+				"useExhaustiveDependencies": "off"
 			},
 			"suspicious": {
-				"noConfusingVoidType": "off"
+				"noConfusingVoidType": "off",
+				"noImplicitAnyLet": "off",
+				"noAssignInExpressions": "off",
+				"noArrayIndexKey": "off",
+				"noDoubleEquals": "off"
 			},
 			"complexity": {
-				"noStaticOnlyClass": "off"
+				"noStaticOnlyClass": "off",
+				"noForEach": "off",
+				"noUselessCatch": "off",
+				"useLiteralKeys": "off"
+			},
+			"style": {
+				"noParameterAssign": "off",
+				"noUselessElse": "off",
+				"useTemplate": "off",
+				"useImportType": "off",
+				"useNodejsImportProtocol": "off",
+				"useExponentiationOperator": "off",
+				"useSelfClosingElements": "off"
 			}
 		}
 	}

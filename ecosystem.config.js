@@ -4,8 +4,9 @@ module.exports = {
     script: './dist/index.js',
     instances: 1,
     autorestart: true,
+    wait_ready: true,
+    listen_timeout: 10000,
     watch: false,
-    max_memory_restart: '1G',
     env: {
       NODE_ENV: 'production',
     },
